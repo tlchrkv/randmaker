@@ -1,0 +1,47 @@
+version: '3.4'
+
+services:
+  nginx:
+    image: nginx:1.21-alpine
+    container_name: randmaker_nginx
+    restart: unless-stopped
+    networks:
+      - randmaker
+    depends_on:
+      - php
+    volumes:
+      - ./:/opt/app
+      - ./build/local/nginx/config:/etc/nginx/conf.d
+    ports:
+      - '80:80'
+
+  redis:
+    image: redis:6.0.4
+    container_name: randmaker_redis
+    restart: unless-stopped
+    networks:
+      - randmaker
+    command: redis-server /usr/local/etc/redis/redis.conf
+    volumes:
+      - ./build/local/redis/redis.conf:/usr/local/etc/redis/redis.conf
+      - ./build/local/redis/data:/data
+
+  php:
+    build:
+      context: .
+      dockerfile: build/local/php/Dockerfile
+    container_name: randmaker_php
+    networks:
+      - randmaker
+    depends_on:
+      - redis
+    volumes:
+      - .:/opt/app:delegated
+    env_file:
+      - .env
+
+networks:
+  randmaker:
+    driver: "bridge"
+    driver_opts:
+      com.docker.network.driver.mtu: 1400

@@ -1,0 +1,7 @@
+vendor/
+build/local/redis/data/bases/*
+!build/local/redis/data/bases/.gitkeep
+build/local/redis/data/log/*
+!build/local/redis/data/log/.gitkeep
+.env
+docker-compose.yml
