@@ -66,7 +66,7 @@ try {
     $response = [
         'code' => 500,
         'content' => [
-            'error' => $exception->getMessage(),
+            'error' => getenv('ENV') === 'local' ? $exception->getMessage() : 'System error',
         ],
     ];
 }
